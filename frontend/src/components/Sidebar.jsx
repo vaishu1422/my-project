@@ -1,11 +1,19 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
 import "./ChatDashboard.css";
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState("Home");
+  const navigate = useNavigate(); // ✅ Initialize navigate
 
   const users = ["Alice", "Bob", "Charlie"];
+
+  // Logout function
+  const handleLogout = () => {
+    alert("Logged out successfully! 👋");
+    navigate("/"); // ✅ Redirect to login page
+  };
 
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
@@ -54,7 +62,9 @@ export default function Sidebar() {
       </ul>
 
       {/* Logout at bottom */}
-      <button className="logout-btn">🚪 {!collapsed && "Logout"}</button>
+      <button className="logout-btn" onClick={handleLogout}>
+        🚪 {!collapsed && "Logout"}
+      </button>
     </div>
   );
 }
