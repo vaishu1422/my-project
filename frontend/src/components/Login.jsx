@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom"; // ✅ if using router
+import { Link, useNavigate } from "react-router-dom"; // ✅ added useNavigate
 import "./Login.css";
 
 export default function Login() {
@@ -8,15 +8,27 @@ export default function Login() {
     password: "",
   });
 
+  const navigate = useNavigate(); // ✅ hook for navigation
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Login Data:", formData);
-    alert(`Logged in as ${formData.email}`);
-    setFormData({ email: "", password: "" });
+
+    if (formData.email && formData.password) {
+      console.log("Login Data:", formData);
+      alert(`Logged in as ${formData.email}`);
+
+      // ✅ navigate to chat dashboard
+      navigate("/chat");
+
+      // reset form
+      setFormData({ email: "", password: "" });
+    } else {
+      alert("Please fill in both fields");
+    }
   };
 
   return (
@@ -46,7 +58,7 @@ export default function Login() {
         </button>
       </form>
       <p className="signup-link">
-        Don't have an account? <Link to="/signup">Signup</Link>
+        Don’t have an account? <Link to="/signup">Signup</Link>
       </p>
     </div>
   );

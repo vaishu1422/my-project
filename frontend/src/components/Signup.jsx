@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Signup.css";
+import {Link} from "react-router-dom"
 
 export default function Signup() {
   // State for form fields
@@ -58,7 +59,7 @@ export default function Signup() {
         </button>
       </form>
       <p className="login-link">
-        Already have an account? <a href="#">Login</a>
+        Already have an account? <Link to ="/">Login</Link>
       </p>
     </div>
   );
