@@ -24,13 +24,13 @@ export default function Sidebar() {
 
       {/* Menu Items */}
       <ul className="menu-list">
-        <li
+        {/* <li
           className={`menu-item ${activeMenu === "Home" ? "active" : ""}`}
           onClick={() => setActiveMenu("Home")}
         >
           <span className="menu-icon">🏠</span>
           {!collapsed && <span className="menu-text">Home</span>}
-        </li>
+        </li> */}
 
         <li
           className={`menu-item ${activeMenu === "Chat" ? "active" : ""}`}
