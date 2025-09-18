@@ -1,37 +1,35 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import "./Signup.css";
-import {Link} from "react-router-dom"
 
 export default function Signup() {
-  // State for form fields
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Signup Data:", formData);
     alert(`Account created for ${formData.username}`);
-    setFormData({ username: "", email: "", password: "" }); // clear form
+    setFormData({ username: "", email: "", password: "" });
   };
 
   return (
     <div className="signup-container">
-      <h2>Create Account</h2>
+      <h2 className="signup-title">Create Account</h2>
+     
       <form onSubmit={handleSubmit} className="signup-form">
         <input
           className="signup-input"
           type="text"
           name="username"
-          placeholder="Enter username"
+          placeholder="Username"
           value={formData.username}
           onChange={handleChange}
           required
@@ -40,7 +38,7 @@ export default function Signup() {
           className="signup-input"
           type="email"
           name="email"
-          placeholder="Enter email"
+          placeholder="Email Address"
           value={formData.email}
           onChange={handleChange}
           required
@@ -49,7 +47,7 @@ export default function Signup() {
           className="signup-input"
           type="password"
           name="password"
-          placeholder="Enter password"
+          placeholder="Password"
           value={formData.password}
           onChange={handleChange}
           required
@@ -59,7 +57,7 @@ export default function Signup() {
         </button>
       </form>
       <p className="login-link">
-        Already have an account? <Link to ="/">Login</Link>
+        Already have an account? <Link to="/">Login</Link>
       </p>
     </div>
   );
