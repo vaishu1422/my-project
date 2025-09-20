@@ -3,44 +3,51 @@ import Sidebar from "./Sidebar";
 import ChatRoom from "./ChatRoom";
 import MessageBox from "./MessageBox";
 import "./ChatDashboard.css";
+import api from "../services/api";
+import { useUser } from "../context/UserContext";
 
 export default function ChatDashboard() {
+  const { currentUser } = useUser();
   const [messages, setMessages] = useState([]);
+  const [selectedRoom, setSelectedRoom] = useState("chat-room-1");
 
-  // ✅ Chat history load karna
+  // Fetch chat history every 2 seconds (polling)
   useEffect(() => {
-    fetch("http://localhost:8080/api/chat/chat-room-1")
-      .then((res) => res.json())
-      .then((data) => {
-        setMessages(data);
-      })
-      .catch((err) => console.error("Error fetching history:", err));
-  }, []);
-
-  // ✅ Naya message bhejna
-  const handleSendMessage = async (text) => {
-    if (text.trim() !== "") {
-      const newMsg = { sender: "You", message: text };
-
-      // Pehle UI me dikhado
-      setMessages((prev) => [...prev, newMsg]);
-
-      // Backend ko bhejo
+    const fetchMessages = async () => {
       try {
-        await fetch("http://localhost:8080/api/chat/chat-room-1", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: text }),
-        });
-      } catch (error) {
-        console.error("Error sending message:", error);
+        const res = await api.get(`/chat/history/${selectedRoom}`);
+        setMessages(res.data);
+      } catch (err) {
+        console.error(err);
       }
+    };
+
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 2000);
+    return () => clearInterval(interval);
+  }, [selectedRoom]);
+
+  const handleSendMessage = async (text) => {
+    if (!text.trim()) return;
+
+    const message = {
+      sender: currentUser.username,
+      receiver: "all",
+      content: text,
+      room: selectedRoom
+    };
+
+    try {
+      await api.post("/chat/send", message);
+      setMessages([...messages, message]); // Optimistic UI update
+    } catch (err) {
+      console.error(err);
     }
   };
 
   return (
     <div className="chat-dashboard">
-      <Sidebar />
+      <Sidebar selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom} />
       <div className="chat-area">
         <ChatRoom messages={messages} />
         <MessageBox onSend={handleSendMessage} />

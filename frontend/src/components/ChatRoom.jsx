@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { useUser } from "../context/UserContext"; // Import the hook
+import { useUser } from "../context/UserContext";
 import "./ChatDashboard.css";
 
 export default function ChatRoom({ messages }) {
   const chatEndRef = useRef(null);
-  const { currentUser } = useUser(); // Get current user
+  const { currentUser } = useUser();
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -12,10 +12,6 @@ export default function ChatRoom({ messages }) {
 
   return (
     <div className="chat-room-container">
-      <div className="chat-header">
-        <h2>Chat Room</h2>
-      </div>
-
       <div className="chat-messages">
         {messages.map((msg, index) => (
           <div
@@ -23,7 +19,7 @@ export default function ChatRoom({ messages }) {
             className={`chat-bubble ${msg.sender === currentUser?.username ? "self" : "other"}`}
           >
             <span className="sender">{msg.sender}</span>
-            <span className="message">{msg.text}</span>
+            <span className="message">{msg.content}</span>
           </div>
         ))}
         <div ref={chatEndRef} />

@@ -14,20 +14,23 @@ import java.util.Arrays;
 
 @Configuration
 public class SecurityConfig {
+
     @Bean
-public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-}
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
+            .csrf().disable() // Disable CSRF for Postman / testing
             .cors().configurationSource(corsConfigurationSource())
             .and()
             .authorizeHttpRequests()
-            .requestMatchers("/auth/**").permitAll() // Explicitly allow auth endpoints
-            .anyRequest().authenticated(); // Require authentication for other endpoints
+            .requestMatchers("/auth/**", "/chat/**").permitAll() // Allow auth + chat endpoints
+            .anyRequest().authenticated() // other endpoints (if any) require authentication
+            .and()
+            .httpBasic().disable(); // disable default basic auth popup
 
         return http.build();
     }

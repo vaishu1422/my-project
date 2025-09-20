@@ -57,8 +57,8 @@ login({
 
   return (
     <div className="login-container">
-      <h2 className="login-title">Welcome Back</h2>
-      <p className="login-subtitle">Login to continue</p>
+      <h2 className="login-title">Login to continue</h2>
+      
       
       {message && (
         <div className={isError ? "error-message" : "success-message"}>
