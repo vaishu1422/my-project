@@ -1,18 +1,32 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 import "./ChatDashboard.css";
 
-export default function Sidebar({ onSelectUser, onLogout }) {
+export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
-  const [activeMenu, setActiveMenu] = useState("Home");
-  const [users, setUsers] = useState([]);
+  const [activeMenu, setActiveMenu] = useState("Chat");
+  const navigate = useNavigate();
+  const { currentUser, allUsers, logout, refreshUsers } = useUser();
 
-  // 🔹 Fetch active users from backend
+  // Refresh users when component mounts or when activeMenu changes to Chat
   useEffect(() => {
-    fetch("http://localhost:8080/api/chat/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data))
-      .catch((err) => console.error("Error fetching users:", err));
-  }, []);
+    if (activeMenu === "Chat") {
+      refreshUsers();
+    }
+  }, [activeMenu, refreshUsers]);
+
+  const handleLogout = () => {
+    logout();
+    alert("Logged out successfully! 👋");
+    navigate("/");
+  };
+
+  const handleUserClick = (user) => {
+    // You can implement functionality to start a chat with the selected user
+    console.log("Starting chat with:", user.username);
+    // You might want to set this as the active chat
+  };
 
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
@@ -21,42 +35,47 @@ export default function Sidebar({ onSelectUser, onLogout }) {
         {collapsed ? "☰" : "×"}
       </button>
 
+      {/* Display current user */}
+      {!collapsed && currentUser && (
+        <div className="current-user">
+          <div className="user-avatar">{currentUser.username.charAt(0)}</div>
+          <span className="user-name">{currentUser.username}</span>
+          <span className="user-status">Online</span>
+        </div>
+      )}
+
       {/* Menu Items */}
       <ul className="menu-list">
-        <li
-          className={`menu-item ${activeMenu === "Home" ? "active" : ""}`}
-          onClick={() => setActiveMenu("Home")}
-        >
-          <span className="menu-icon">🏠</span>
-          {!collapsed && <span className="menu-text">Home</span>}
-        </li>
-
         <li
           className={`menu-item ${activeMenu === "Chat" ? "active" : ""}`}
           onClick={() => setActiveMenu("Chat")}
         >
           <span className="menu-icon">💬</span>
-          {!collapsed && <span className="menu-text">Chat</span>}
+          {!collapsed && <span className="menu-text">Chats</span>}
         </li>
 
-        {/* Users List (Visible only in Chat menu) */}
+        {/* Show users only if not collapsed & Chat is active */}
         {!collapsed && activeMenu === "Chat" && (
-          <ul className="user-list">
-            {users.length > 0 ? (
-              users.map((user, index) => (
-                <li
-                  key={index}
+          <div className="users-section">
+            <div className="section-header">
+              <span>All Users ({allUsers.length})</span>
+            </div>
+            <ul className="user-list">
+              {allUsers.map((user) => (
+                <li 
+                  key={user.id} 
                   className="user-item"
-                  onClick={() => onSelectUser(user)}
+                  onClick={() => handleUserClick(user)}
                 >
-                  <div className="user-avatar">{user.charAt(0).toUpperCase()}</div>
-                  <span className="user-name">{user}</span>
+                  <div className="user-avatar">{user.username.charAt(0)}</div>
+                  <div className="user-info">
+                    <span className="user-name">{user.username}</span>
+                    <span className="user-email">{user.email}</span>
+                  </div>
                 </li>
-              ))
-            ) : (
-              <p className="no-users">No users online</p>
-            )}
-          </ul>
+              ))}
+            </ul>
+          </div>
         )}
 
         <li
@@ -68,8 +87,8 @@ export default function Sidebar({ onSelectUser, onLogout }) {
         </li>
       </ul>
 
-      {/* Logout Button */}
-      <button className="logout-btn" onClick={onLogout}>
+      {/* Logout at bottom */}
+      <button className="logout-btn" onClick={handleLogout}>
         🚪 {!collapsed && "Logout"}
       </button>
     </div>
