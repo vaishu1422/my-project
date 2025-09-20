@@ -3,14 +3,18 @@ package com.example.chatwebapp.service;
 import com.example.chatwebapp.model.User;
 import com.example.chatwebapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
 public class UserService {
     
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     
-    public UserService(UserRepository userRepository) {
+    // Add PasswordEncoder as a parameter in the constructor
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
     
     public String signup(User user) {
@@ -18,6 +22,9 @@ public class UserService {
         if (userRepository.existsByUsername(user.getUsername())) {
             return "Username already exists";
         }
+        
+        // Encrypt the password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword())); 
         
         // Save user to database
         userRepository.save(user);
@@ -29,7 +36,7 @@ public class UserService {
         User user = userRepository.findByUsername(username);
         
         // Check if user exists and password matches
-        if (user != null && user.getPassword().equals(password)) {
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
             return true;
         }
         
