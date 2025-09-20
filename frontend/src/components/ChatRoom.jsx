@@ -18,10 +18,12 @@ export default function ChatRoom({ messages }) {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`chat-bubble ${msg.sender === "You" ? "self" : "other"}`}
+            className={`chat-bubble ${
+              msg.sender === "You" ? "self" : "other"
+            }`}
           >
             <span className="sender">{msg.sender}</span>
-            <span className="message">{msg.text}</span>
+            <span className="message">{msg.message || msg.text}</span>
           </div>
         ))}
         <div ref={chatEndRef} />

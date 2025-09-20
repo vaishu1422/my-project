@@ -1,18 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import ChatRoom from "./ChatRoom";
 import MessageBox from "./MessageBox";
 import "./ChatDashboard.css";
 
 export default function ChatDashboard() {
-  const [messages, setMessages] = useState([
-    { sender: "Alice", text: "Hey there!" },
-    { sender: "You", text: "Hi Alice!" },
-  ]);
+  const [messages, setMessages] = useState([]);
 
-  const handleSendMessage = (text) => {
+  // ✅ Chat history load karna
+  useEffect(() => {
+    fetch("http://localhost:8080/api/chat/chat-room-1")
+      .then((res) => res.json())
+      .then((data) => {
+        setMessages(data);
+      })
+      .catch((err) => console.error("Error fetching history:", err));
+  }, []);
+
+  // ✅ Naya message bhejna
+  const handleSendMessage = async (text) => {
     if (text.trim() !== "") {
-      setMessages([...messages, { sender: "You", text }]);
+      const newMsg = { sender: "You", message: text };
+
+      // Pehle UI me dikhado
+      setMessages((prev) => [...prev, newMsg]);
+
+      // Backend ko bhejo
+      try {
+        await fetch("http://localhost:8080/api/chat/chat-room-1", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
     }
   };
 

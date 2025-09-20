@@ -10,18 +10,23 @@ export default function Login() {
 
   const navigate = useNavigate();
 
+  // Form input change handler
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Form submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (formData.email && formData.password) {
-      console.log("Login Data:", formData);
-      alert(`Logged in as ${formData.email}`);
+      // ✅ Save username to localStorage for chat
+      localStorage.setItem("username", formData.email);
 
+      // Navigate to Chat Dashboard
       navigate("/chat");
+
+      // Reset form
       setFormData({ email: "", password: "" });
     } else {
       alert("Please fill in both fields");

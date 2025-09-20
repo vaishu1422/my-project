@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "./ChatDashboard.css"
+import "./ChatDashboard.css";
+
 export default function MessageBox({ onSend }) {
   const [text, setText] = useState("");
 

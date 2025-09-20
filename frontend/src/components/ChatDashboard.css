@@ -310,3 +310,43 @@
   background: #2e3c2b;
   transform: scale(1.05);
 }
+.chat-bubble {
+  max-width: 60%;
+  padding: 10px;
+  margin: 8px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  word-wrap: break-word;
+}
+
+.chat-bubble.self {
+  background-color: #4cafef;
+  color: white;
+  margin-left: auto;
+  text-align: right;
+}
+
+.chat-bubble.other {
+  background-color: #f1f1f1;
+  color: black;
+  margin-right: auto;
+  text-align: left;
+}
+
+.sender {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.message {
+  font-size: 14px;
+}
+
+.time {
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+

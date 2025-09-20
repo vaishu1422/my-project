@@ -1,11 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./ChatDashboard.css";
 
-export default function Sidebar() {
+export default function Sidebar({ onSelectUser, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState("Home");
+  const [users, setUsers] = useState([]);
 
-  const users = ["Alice", "Bob", "Charlie"];
+  // 🔹 Fetch active users from backend
+  useEffect(() => {
+    fetch("http://localhost:8080/api/chat/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data))
+      .catch((err) => console.error("Error fetching users:", err));
+  }, []);
 
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
@@ -32,15 +39,23 @@ export default function Sidebar() {
           {!collapsed && <span className="menu-text">Chat</span>}
         </li>
 
-        {/* Show users only if not collapsed & Chat is active */}
+        {/* Users List (Visible only in Chat menu) */}
         {!collapsed && activeMenu === "Chat" && (
           <ul className="user-list">
-            {users.map((user, index) => (
-              <li key={index} className="user-item">
-                <div className="user-avatar">{user.charAt(0)}</div>
-                <span className="user-name">{user}</span>
-              </li>
-            ))}
+            {users.length > 0 ? (
+              users.map((user, index) => (
+                <li
+                  key={index}
+                  className="user-item"
+                  onClick={() => onSelectUser(user)}
+                >
+                  <div className="user-avatar">{user.charAt(0).toUpperCase()}</div>
+                  <span className="user-name">{user}</span>
+                </li>
+              ))
+            ) : (
+              <p className="no-users">No users online</p>
+            )}
           </ul>
         )}
 
@@ -53,8 +68,10 @@ export default function Sidebar() {
         </li>
       </ul>
 
-      {/* Logout at bottom */}
-      <button className="logout-btn">🚪 {!collapsed && "Logout"}</button>
+      {/* Logout Button */}
+      <button className="logout-btn" onClick={onLogout}>
+        🚪 {!collapsed && "Logout"}
+      </button>
     </div>
   );
 }

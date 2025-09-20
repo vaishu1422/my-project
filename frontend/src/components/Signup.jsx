@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Signup.css";
 
 export default function Signup() {
@@ -9,21 +9,38 @@ export default function Signup() {
     password: "",
   });
 
+  const navigate = useNavigate();
+
+  // Form input change handler
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Form submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Signup Data:", formData);
-    alert(`Account created for ${formData.username}`);
-    setFormData({ username: "", email: "", password: "" });
+
+    if (formData.username && formData.email && formData.password) {
+      console.log("Signup Data:", formData);
+
+      // ✅ Save username to localStorage for chat
+      localStorage.setItem("username", formData.username);
+
+      alert(`Account created for ${formData.username}`);
+
+      // Navigate to Chat Dashboard
+      navigate("/chat");
+
+      // Reset form
+      setFormData({ username: "", email: "", password: "" });
+    } else {
+      alert("Please fill in all fields");
+    }
   };
 
   return (
     <div className="signup-container">
       <h2 className="signup-title">Create Account</h2>
-     
       <form onSubmit={handleSubmit} className="signup-form">
         <input
           className="signup-input"
