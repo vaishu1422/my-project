@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
-import api from "../services/api"; // Import the configured axios instance
+import api from "../services/api";
+import { useUser } from "../context/UserContext"; // Import the configured axios instance
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+  const {login} = useUser();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,11 +31,16 @@ export default function Login() {
       const response = await api.post('/auth/login', formData);
       
       setMessage("Login successful!");
+      // In your handleSubmit function, after successful login:
+login({ 
+  id: response.data.id, // Make sure your backend returns the user ID
+  username: formData.username 
+});
       setIsError(false);
       
       // Store user data if needed
       localStorage.setItem('username', formData.username);
-      
+      login({ username: formData.username });
       // Redirect to chat page after a brief delay
       setTimeout(() => {
         navigate("/chat");
