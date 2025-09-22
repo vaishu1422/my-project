@@ -16,10 +16,8 @@ export const UserProvider = ({ children }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all users from backend
   const fetchAllUsers = async () => {
     try {
-      // You'll need to create this endpoint in your Spring Boot backend
       const response = await api.get('/auth/users');
       setAllUsers(response.data);
     } catch (error) {
@@ -27,7 +25,6 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // Set current user when app loads
   useEffect(() => {
     const savedUser = localStorage.getItem('currentUser');
     if (savedUser) {
@@ -40,13 +37,13 @@ export const UserProvider = ({ children }) => {
   const login = (userData) => {
     setCurrentUser(userData);
     localStorage.setItem('currentUser', JSON.stringify(userData));
-     fetchAllUsers();
-};
+    fetchAllUsers();
+  };
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('currentUser');
     setAllUsers([]);
+    localStorage.removeItem('currentUser');
   };
 
   const value = {

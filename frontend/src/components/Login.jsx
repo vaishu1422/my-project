@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Login.css";
 import api from "../services/api";
-import { useUser } from "../context/UserContext"; // Import the configured axios instance
+import { useUser } from "../context/UserContext";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -14,7 +14,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
-  const {login} = useUser();
+  const { login } = useUser();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,28 +27,28 @@ export default function Login() {
     setMessage("");
 
     try {
-      // Use the configured api instance
       const response = await api.post('/auth/login', formData);
       
-      setMessage("Login successful!");
-      // In your handleSubmit function, after successful login:
-login({ 
-  id: response.data.id, // Make sure your backend returns the user ID
-  username: formData.username 
-});
-      setIsError(false);
-      
-      // Store user data if needed
-      localStorage.setItem('username', formData.username);
-      login({ username: formData.username });
-      // Redirect to chat page after a brief delay
-      setTimeout(() => {
-        navigate("/chat");
-      }, 1000);
+      if (response.data.status === "success") {
+        setMessage("Login successful!");
+        setIsError(false);
+        
+        // Store user data in context and localStorage
+        login(response.data.user);
+        localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+        
+        // Redirect to chat page
+        setTimeout(() => {
+          navigate("/chat");
+        }, 1000);
+      } else {
+        setMessage(response.data.message || "Login failed");
+        setIsError(true);
+      }
       
     } catch (error) {
       console.error("Login error:", error);
-      setMessage(error.response?.data || "Login failed. Please try again.");
+      setMessage(error.response?.data?.message || "Login failed. Please try again.");
       setIsError(true);
     } finally {
       setIsLoading(false);
@@ -58,7 +58,6 @@ login({
   return (
     <div className="login-container">
       <h2 className="login-title">Login to continue</h2>
-      
       
       {message && (
         <div className={isError ? "error-message" : "success-message"}>

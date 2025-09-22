@@ -31,7 +31,10 @@ public class UserService {
         User user = userRepository.findByUsername(username);
         return user != null && passwordEncoder.matches(password, user.getPassword());
     }
-    
+    // Add this method to your UserService class
+public User findByUsername(String username) {
+    return userRepository.findByUsername(username);
+}
     // Make sure this method exists
     public List<User> getAllUsers() {
         return userRepository.findAll();

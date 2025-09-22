@@ -13,7 +13,7 @@ import java.util.Map;
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 public class AuthController {
 
-    private final UserService userService; // Make sure this matches everywhere
+    private final UserService userService;
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -25,16 +25,31 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest loginRequest) {
+    public Map<String, Object> login(@RequestBody LoginRequest loginRequest) {
         boolean isValid = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-        return isValid ? "Login successful!" : "Invalid credentials!";
+        Map<String, Object> response = new HashMap<>();
+        
+        if (isValid) {
+            // Get user details
+            User user = userService.findByUsername(loginRequest.getUsername());
+            response.put("status", "success");
+            response.put("message", "Login successful!");
+            response.put("user", Map.of(
+                "id", user.getId(),
+                "username", user.getUsername(),
+                "email", user.getEmail()
+            ));
+        } else {
+            response.put("status", "error");
+            response.put("message", "Invalid credentials!");
+        }
+        return response;
     }
     
     @GetMapping("/users")
     public List<Map<String, String>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         
-        // Return only username and email, exclude password
         return users.stream().map(user -> {
             Map<String, String> userMap = new HashMap<>();
             userMap.put("id", user.getId());
