@@ -10,9 +10,23 @@ export default function ChatRoom({ messages, selectedChat }) {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // ✅ Display name logic
+  const getChatHeader = () => {
+    if (selectedChat.startsWith("chat-room")) {
+      return selectedChat; // Group chat
+    } else {
+      const users = selectedChat.split("_");
+      return users[0] === currentUser.username ? users[1] : users[0]; // Private chat
+    }
+  };
+
   return (
     <div className="chat-room-container">
-      <h2 className="chat-header">Chat: {selectedChat}</h2>
+      {/* Header Section */}
+      <div className="chat-header-section">
+        <h2 className="chat-header-name">{getChatHeader()}</h2>
+      </div>
+
       <div className="chat-messages">
         {messages.map((msg, index) => (
           <div

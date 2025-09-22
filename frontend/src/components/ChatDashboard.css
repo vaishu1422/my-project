@@ -350,3 +350,57 @@ body, html {
   margin-bottom: 15px;
   border: 1px solid #4caf50;
 }
+
+/* Sidebar search bar */
+.user-search-input {
+  width: 90%;
+  margin: 8px auto 12px auto;
+  display: block;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #a9b7b4;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.user-search-input:focus {
+  border-color: #4caf50;
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+/* ChatRoom Header */
+.chat-header-section {
+  background-color: #4caf50; /* Green accent */
+  padding: 15px 20px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+}
+
+.chat-header-name {
+  margin: 0;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
+@media (max-width: 600px) {
+  .sidebar {
+    flex-direction: column;
+    width: 100%;
+  }
+  .chat-header-name {
+    font-size: 18px;
+  }
+  .chat-bubble {
+    font-size: 13px;
+  }
+  .message-box input {
+    font-size: 13px;
+  }
+  .message-box button {
+    padding: 8px 16px;
+  }
+}
