@@ -9,13 +9,13 @@ import { useUser } from "../context/UserContext";
 export default function ChatDashboard() {
   const { currentUser } = useUser();
   const [messages, setMessages] = useState([]);
-  const [selectedRoom, setSelectedRoom] = useState("chat-room-1");
+  const [selectedChat, setSelectedChat] = useState("chat-room-1"); // default
 
-  // Fetch chat history every 2 seconds (polling)
+  // Fetch chat history
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const res = await api.get(`/chat/history/${selectedRoom}`);
+        const res = await api.get(`/chat/history/${selectedChat}`);
         setMessages(res.data);
       } catch (err) {
         console.error(err);
@@ -25,16 +25,19 @@ export default function ChatDashboard() {
     fetchMessages();
     const interval = setInterval(fetchMessages, 2000);
     return () => clearInterval(interval);
-  }, [selectedRoom]);
+  }, [selectedChat]);
 
   const handleSendMessage = async (text) => {
     if (!text.trim()) return;
 
+    // private vs group decide karna
+    const isRoom = selectedChat.startsWith("chat-room");
     const message = {
       sender: currentUser.username,
-      receiver: "all",
+      receiver: isRoom ? "all" : selectedChat.replace(`${currentUser.username}_`, "").replace(`_${currentUser.username}`, ""), // dusre user ka naam
       content: text,
-      room: selectedRoom
+      room: isRoom ? selectedChat : null,
+      chatId: selectedChat
     };
 
     try {
@@ -47,9 +50,9 @@ export default function ChatDashboard() {
 
   return (
     <div className="chat-dashboard">
-      <Sidebar selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom} />
+      <Sidebar selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
       <div className="chat-area">
-        <ChatRoom messages={messages} />
+        <ChatRoom messages={messages} selectedChat={selectedChat} />
         <MessageBox onSend={handleSendMessage} />
       </div>
     </div>
