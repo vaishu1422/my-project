@@ -9,18 +9,20 @@ public class Message {
     @Id
     private String id;
     private String sender;
-    private String receiver; // username or "all"
+    private String receiver; // "all" for group OR username for private
     private String content;
-    private String room;      // chat-room-1 or chat-room-2
+    private String room;     // legacy field (chat-room-1, chat-room-2)
+    private String chatId;   // NEW → unique chat identifier (e.g. "room-1" or "Alice_Bob")
     private LocalDateTime timestamp;
 
     public Message() {}
 
-    public Message(String sender, String receiver, String content, String room) {
+    public Message(String sender, String receiver, String content, String room, String chatId) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.room = room;
+        this.chatId = chatId;
         this.timestamp = LocalDateTime.now();
     }
 
@@ -39,6 +41,9 @@ public class Message {
 
     public String getRoom() { return room; }
     public void setRoom(String room) { this.room = room; }
+
+    public String getChatId() { return chatId; }
+    public void setChatId(String chatId) { this.chatId = chatId; }
 
     public LocalDateTime getTimestamp() { return timestamp; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
