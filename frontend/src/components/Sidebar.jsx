@@ -26,9 +26,9 @@ export default function Sidebar({ selectedChat, setSelectedChat }) {
       user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-  return (
+   return (
     <div className="sidebar">
-      {/* Current User Section */}
+      {/* Current User Section - Fixed */}
       {currentUser && (
         <div className="current-user-section">
           <div className="user-info">
@@ -46,51 +46,63 @@ export default function Sidebar({ selectedChat, setSelectedChat }) {
         </div>
       )}
 
-      {/* Rooms Section */}
-      <div className="sidebar-section">
-        <h3>Rooms</h3>
-        <ul>
-          {rooms.map((room) => (
-            <li
-              key={room}
-              className={selectedChat === room ? "active" : ""}
-              onClick={() => setSelectedChat(room)}
-            >
-              {room}
-            </li>
-          ))}
-        </ul>
-      </div>
+      {/* Scrollable Content */}
+      <div className="sidebar-content">
+        <div className="sidebar-sections-container">
+          {/* Rooms Section */}
+          <div className="sidebar-section">
+            <h3>Rooms</h3>
+            <ul>
+              {rooms.map((room) => (
+                <li
+                  key={room}
+                  className={selectedChat === room ? "active" : ""}
+                  onClick={() => setSelectedChat(room)}
+                >
+                  {room}
+                </li>
+              ))}
+            </ul>
+          </div>
 
-      {/* Users Section */}
-      <div className="sidebar-section">
-        <h3>Users ({filteredUsers.length})</h3>
+          {/* Users Section - This will be scrollable */}
+          <div className="sidebar-section">
+            <h3>Users ({filteredUsers.length})</h3>
 
-        {/* 🔍 Search Bar */}
-        <input
-          type="text"
-          placeholder="Search users..."
-          className="user-search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+            {/* Search Bar */}
+            <input
+              type="text"
+              placeholder="Search users..."
+              className="user-search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
 
-        <ul>
-          {filteredUsers.map((user) => {
-            const chatId = getPrivateChatId(currentUser.username, user.username);
-            return (
-              <li
-                key={user.id}
-                className={selectedChat === chatId ? "active" : ""}
-                onClick={() => setSelectedChat(chatId)}
-              >
-                <span className="user-status-indicator"></span>
-                {user.username}
-              </li>
-            );
-          })}
-        </ul>
+            <ul>
+              {filteredUsers.length > 0 ? (
+                filteredUsers.map((user) => {
+                  const chatId = getPrivateChatId(currentUser.username, user.username);
+                  return (
+                    <li
+                      key={user.id}
+                      className={selectedChat === chatId ? "active" : ""}
+                      onClick={() => setSelectedChat(chatId)}
+                    >
+                      <span className="user-status-indicator"></span>
+                      {user.username}
+                    </li>
+                  );
+                })
+              ) : (
+                <div className="empty-users">
+                  {searchTerm ? 'No users found' : 'No users available'}
+                </div>
+              )}
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
+
 }

@@ -11,6 +11,15 @@ export default function MessageBox({ onSend }) {
     }
   };
 
+
+  // Add this function for Enter key
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission
+      handleSend();
+    }
+  };
+
   return (
     <div className="message-box">
       <input
@@ -18,6 +27,8 @@ export default function MessageBox({ onSend }) {
         placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
+        onKeyPress={handleKeyPress} // Add this line
+        className="message-input"
       />
       <button onClick={handleSend}>Send</button>
     </div>
